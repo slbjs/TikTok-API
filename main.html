@@ -1,1 +1,553 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TikTok Content Extractor API — Docs</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0b0d10;
+    --surface:#14171c;
+    --surface-2:#1b1f26;
+    --border:#262b33;
+    --text:#e9ecf1;
+    --muted:#8b93a1;
+    --cyan:#25f4ee;
+    --pink:#fe2c55;
+    --ok:#3ddc84;
+    --radius:10px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Inter',sans-serif;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{background:var(--pink);color:#fff;}
+
+  a{color:var(--cyan);text-decoration:none;}
+  a:hover{text-decoration:underline;}
+  code, pre, .mono{font-family:'JetBrains Mono',monospace;}
+
+  h1,h2,h3{font-family:'Space Grotesk',sans-serif;font-weight:700;margin:0 0 .5em;}
+
+  /* Layout */
+  .wrap{
+    display:grid;
+    grid-template-columns:240px 1fr;
+    max-width:1180px;
+    margin:0 auto;
+  }
+  nav.side{
+    position:sticky;
+    top:0;
+    align-self:start;
+    height:100vh;
+    overflow-y:auto;
+    padding:32px 20px;
+    border-right:1px solid var(--border);
+  }
+  nav.side .brand{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:28px;
+  }
+  nav.side .dot{
+    width:10px;height:10px;border-radius:50%;
+    background:var(--ok);
+    box-shadow:0 0 8px var(--ok);
+    flex-shrink:0;
+  }
+  nav.side .brand span{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:14px;letter-spacing:.02em;}
+  nav.side ul{list-style:none;padding:0;margin:0;}
+  nav.side li{margin-bottom:2px;}
+  nav.side a{
+    display:block;
+    color:var(--muted);
+    font-size:13.5px;
+    padding:7px 10px;
+    border-radius:6px;
+    transition:background .15s, color .15s;
+  }
+  nav.side a:hover{background:var(--surface-2);color:var(--text);text-decoration:none;}
+
+  main{padding:0 40px 100px;}
+
+  /* Hero */
+  .hero{
+    padding:80px 0 48px;
+    border-bottom:1px solid var(--border);
+  }
+  .eyebrow{
+    font-family:'JetBrains Mono',monospace;
+    font-size:12px;
+    color:var(--muted);
+    text-transform:uppercase;
+    letter-spacing:.14em;
+    margin-bottom:18px;
+  }
+  .eyebrow b{color:var(--ok);font-weight:600;}
+  .glitch-title{
+    font-size:clamp(34px,5vw,56px);
+    line-height:1.05;
+    position:relative;
+    color:var(--text);
+    display:inline-block;
+  }
+  .glitch-title .layer{
+    position:absolute;
+    top:0;left:0;
+    width:100%;
+    z-index:-1;
+  }
+  .glitch-title .layer.cyan{color:var(--cyan);transform:translate(3px,2px);opacity:.75;}
+  .glitch-title .layer.pink{color:var(--pink);transform:translate(-3px,-2px);opacity:.75;}
+  .hero p.lead{
+    max-width:620px;
+    color:var(--muted);
+    font-size:16px;
+    margin-top:20px;
+  }
+  .hero .base-url{
+    margin-top:28px;
+    display:inline-flex;
+    align-items:center;
+    gap:12px;
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:12px 16px;
+  }
+  .hero .base-url code{color:var(--cyan);font-size:14px;}
+  .copy-btn{
+    background:var(--surface-2);
+    border:1px solid var(--border);
+    color:var(--text);
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    padding:5px 10px;
+    border-radius:6px;
+    cursor:pointer;
+    transition:border-color .15s;
+  }
+  .copy-btn:hover{border-color:var(--cyan);}
+
+  /* Sections */
+  section{padding:56px 0;border-bottom:1px solid var(--border);}
+  section:last-of-type{border-bottom:none;}
+  section h2{font-size:24px;}
+  section .desc{color:var(--muted);font-size:15px;margin-bottom:24px;max-width:680px;}
+
+  .badge{
+    display:inline-block;
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    font-weight:700;
+    padding:3px 9px;
+    border-radius:5px;
+    letter-spacing:.03em;
+  }
+  .badge.get{background:rgba(37,244,238,.12);color:var(--cyan);border:1px solid rgba(37,244,238,.35);}
+
+  .endpoint-row{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:14px 18px;
+    font-size:14px;
+    flex-wrap:wrap;
+  }
+
+  table{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:10px;}
+  th,td{text-align:left;padding:10px 14px;border-bottom:1px solid var(--border);}
+  th{color:var(--muted);font-family:'JetBrains Mono',monospace;font-weight:500;font-size:11.5px;text-transform:uppercase;letter-spacing:.08em;}
+  td code{color:var(--cyan);}
+  td.req{color:var(--pink);font-family:'JetBrains Mono',monospace;font-size:12px;}
+  td.opt{color:var(--muted);font-family:'JetBrains Mono',monospace;font-size:12px;}
+
+  pre.code-block{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:18px 20px;
+    overflow-x:auto;
+    font-size:13px;
+    position:relative;
+    margin:0;
+  }
+  .code-wrap{position:relative;}
+  .code-label{
+    position:absolute;
+    top:-11px;left:16px;
+    background:var(--bg);
+    padding:0 8px;
+    font-family:'JetBrains Mono',monospace;
+    font-size:10.5px;
+    color:var(--muted);
+    letter-spacing:.08em;
+    text-transform:uppercase;
+  }
+  .tok-key{color:#9cdcfe;}
+  .tok-str{color:var(--ok);}
+  .tok-num{color:#e5c07b;}
+  .tok-punc{color:var(--muted);}
+
+  .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+  @media (max-width:800px){.grid-2{grid-template-columns:1fr;}}
+
+  /* Try it */
+  .console{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:22px;
+  }
+  .console .row{display:flex;gap:10px;flex-wrap:wrap;}
+  .console input[type=text]{
+    flex:1;
+    min-width:220px;
+    background:var(--bg);
+    border:1px solid var(--border);
+    border-radius:7px;
+    padding:11px 14px;
+    color:var(--text);
+    font-family:'JetBrains Mono',monospace;
+    font-size:13px;
+  }
+  .console input[type=text]:focus{outline:none;border-color:var(--cyan);}
+  .run-btn{
+    background:var(--pink);
+    border:none;
+    color:#fff;
+    font-family:'Space Grotesk',sans-serif;
+    font-weight:700;
+    font-size:13.5px;
+    padding:11px 22px;
+    border-radius:7px;
+    cursor:pointer;
+    transition:filter .15s, transform .1s;
+  }
+  .run-btn:hover{filter:brightness(1.1);}
+  .run-btn:active{transform:scale(.97);}
+  .run-btn:disabled{opacity:.5;cursor:not-allowed;}
+  .console .result{
+    margin-top:16px;
+    background:var(--bg);
+    border:1px solid var(--border);
+    border-radius:8px;
+    padding:16px;
+    font-family:'JetBrains Mono',monospace;
+    font-size:12.5px;
+    max-height:420px;
+    overflow:auto;
+    white-space:pre-wrap;
+    word-break:break-all;
+    color:var(--muted);
+    display:none;
+  }
+  .console .result.show{display:block;}
+  .status-line{
+    font-family:'JetBrains Mono',monospace;
+    font-size:12px;
+    margin-top:14px;
+    display:none;
+  }
+  .status-line.show{display:block;}
+  .status-line.ok{color:var(--ok);}
+  .status-line.err{color:var(--pink);}
+  .preview-card{
+    margin-top:14px;
+    display:none;
+    gap:14px;
+    align-items:flex-start;
+    background:var(--bg);
+    border:1px solid var(--border);
+    border-radius:8px;
+    padding:14px;
+  }
+  .preview-card.show{display:flex;}
+  .preview-card img{width:64px;height:64px;border-radius:50%;object-fit:cover;flex-shrink:0;}
+  .preview-card .meta{font-size:13px;}
+  .preview-card .meta .name{font-weight:600;font-family:'Space Grotesk',sans-serif;}
+  .preview-card .meta .title{color:var(--muted);font-size:12.5px;margin-top:4px;}
+  .preview-card .meta a.dl{
+    display:inline-block;
+    margin-top:8px;
+    font-family:'JetBrains Mono',monospace;
+    font-size:11.5px;
+    color:var(--cyan);
+    border:1px solid rgba(37,244,238,.35);
+    padding:5px 10px;
+    border-radius:6px;
+  }
+  .preview-card .meta a.dl:hover{background:rgba(37,244,238,.08);}
+
+  .field-note{
+    font-size:13px;
+    color:var(--muted);
+    background:var(--surface);
+    border-left:3px solid var(--cyan);
+    padding:12px 16px;
+    border-radius:0 8px 8px 0;
+    margin-top:16px;
+  }
+  .field-note b{color:var(--text);}
+
+  footer{
+    padding:32px 40px 60px;
+    color:var(--muted);
+    font-size:12.5px;
+    font-family:'JetBrains Mono',monospace;
+  }
+
+  @media (max-width:900px){
+    .wrap{grid-template-columns:1fr;}
+    nav.side{position:relative;height:auto;border-right:none;border-bottom:1px solid var(--border);}
+    main{padding:0 20px 80px;}
+    .hero{padding:48px 0 36px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <nav class="side">
+    <div class="brand"><span class="dot"></span><span>TT-EXTRACTOR API</span></div>
+    <ul>
+      <li><a href="#overview">Overview</a></li>
+      <li><a href="#endpoint">Endpoint</a></li>
+      <li><a href="#params">Parameters</a></li>
+      <li><a href="#request">Example Request</a></li>
+      <li><a href="#response">Response Schema</a></li>
+      <li><a href="#tryit">Try It Live</a></li>
+      <li><a href="#errors">Errors &amp; Notes</a></li>
+    </ul>
+  </nav>
+
+  <main>
+    <section class="hero" id="overview">
+      <div class="eyebrow">v2.0.0 &nbsp;·&nbsp; status: <b>online</b></div>
+      <h1 class="glitch-title">
+        TikTok Content Extractor API
+        <span class="layer cyan" aria-hidden="true">TikTok Content Extractor API</span>
+        <span class="layer pink" aria-hidden="true">TikTok Content Extractor API</span>
+      </h1>
+      <p class="lead">A single-endpoint API that resolves a TikTok share link into a clean JSON payload — watermark-free video download links, audio track, author metadata, and engagement stats. No auth, no SDK, just a GET request.</p>
+      <div class="base-url">
+        <code id="baseUrlText">https://tdownv4.sl-bjs.workers.dev/</code>
+        <button class="copy-btn" onclick="copyText('baseUrlText', this)">copy</button>
+      </div>
+    </section>
+
+    <section id="endpoint">
+      <h2>Endpoint</h2>
+      <p class="desc">One route handles every content type TikTok serves — videos, photo carousels, and audio-only posts. The response shape adapts to <code>content_type</code>.</p>
+      <div class="endpoint-row">
+        <span class="badge get">GET</span>
+        <code class="mono" style="color:var(--text)">/?down=&#123;tiktok_url&#125;</code>
+      </div>
+    </section>
+
+    <section id="params">
+      <h2>Query Parameters</h2>
+      <p class="desc">Accepts both full <code>tiktok.com</code> links and shortened <code>vt.tiktok.com</code> / <code>vm.tiktok.com</code> share links.</p>
+      <table>
+        <thead>
+          <tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>down</code></td>
+            <td>string</td>
+            <td class="req">required</td>
+            <td>Full or shortened TikTok post URL, URL-encoded.</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="field-note"><b>Tip:</b> always <code>encodeURIComponent()</code> the TikTok URL before appending it as the <code>down</code> value — share links can carry tracking query strings of their own.</div>
+    </section>
+
+    <section id="request">
+      <h2>Example Request</h2>
+      <div class="grid-2">
+        <div class="code-wrap">
+          <span class="code-label">cURL</span>
+          <pre class="code-block"><span class="tok-punc">curl</span> <span class="tok-str">"https://tdownv4.sl-bjs.workers.dev/?down=https://vt.tiktok.com/ZSxNb6qj7/"</span></pre>
+        </div>
+        <div class="code-wrap">
+          <span class="code-label">JavaScript</span>
+          <pre class="code-block"><span class="tok-key">const</span> res = <span class="tok-key">await</span> fetch(
+  <span class="tok-str">'https://tdownv4.sl-bjs.workers.dev/?down=' + encodeURIComponent(url)</span>
+);
+<span class="tok-key">const</span> data = <span class="tok-key">await</span> res.json();</pre>
+        </div>
+      </div>
+    </section>
+
+    <section id="response">
+      <h2>Response Schema</h2>
+      <p class="desc">Video-type example. All URLs are signed, time-limited CDN links — fetch fresh on each request rather than caching them long-term.</p>
+      <div class="code-wrap">
+        <span class="code-label">JSON — 200 OK</span>
+        <pre class="code-block">{
+  <span class="tok-key">"title"</span>: <span class="tok-str">"feel like a brand new person! #mouse #kdrama ..."</span>,
+  <span class="tok-key">"content_type"</span>: <span class="tok-str">"video"</span>,
+  <span class="tok-key">"video_id"</span>: <span class="tok-str">"7362722259435359521"</span>,
+  <span class="tok-key">"author"</span>: {
+    <span class="tok-key">"username"</span>: <span class="tok-str">"rawideation"</span>,
+    <span class="tok-key">"nickname"</span>: <span class="tok-str">"tuva ♡"</span>,
+    <span class="tok-key">"avatar"</span>: <span class="tok-str">"https://p19-common-sign.tiktokcdn-us.com/..."</span>,
+    <span class="tok-key">"duration"</span>: <span class="tok-num">24</span>,
+    <span class="tok-key">"view_count"</span>: <span class="tok-num">393743</span>,
+    <span class="tok-key">"like_count"</span>: <span class="tok-num">38288</span>,
+    <span class="tok-key">"audio_url"</span>: <span class="tok-str">"https://v16-ies-music.tiktokcdn-us.com/..."</span>
+  },
+  <span class="tok-key">"download_url"</span>: <span class="tok-str">"https://v16m-default.tiktokcdn-us.com/..."</span>
+}</pre>
+      </div>
+
+      <table>
+        <thead>
+          <tr><th>Field</th><th>Type</th><th>Description</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>title</code></td><td>string</td><td>Post caption, including hashtags.</td></tr>
+          <tr><td><code>content_type</code></td><td>string</td><td><code>"video"</code>, <code>"photo"</code>, or <code>"audio"</code>.</td></tr>
+          <tr><td><code>video_id</code></td><td>string</td><td>Numeric TikTok post ID.</td></tr>
+          <tr><td><code>author.username</code></td><td>string</td><td>@handle without the <code>@</code>.</td></tr>
+          <tr><td><code>author.nickname</code></td><td>string</td><td>Display name shown on profile.</td></tr>
+          <tr><td><code>author.avatar</code></td><td>string</td><td>Signed CDN URL to profile photo.</td></tr>
+          <tr><td><code>author.duration</code></td><td>number</td><td>Clip length in seconds.</td></tr>
+          <tr><td><code>author.view_count</code></td><td>number</td><td>Total views at fetch time.</td></tr>
+          <tr><td><code>author.like_count</code></td><td>number</td><td>Total likes at fetch time.</td></tr>
+          <tr><td><code>author.audio_url</code></td><td>string</td><td>Direct link to the extracted audio track (MP3-encoded).</td></tr>
+          <tr><td><code>download_url</code></td><td>string</td><td>Watermark-free MP4 download link.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="tryit">
+      <h2>Try It Live</h2>
+      <p class="desc">Paste a TikTok share link and call the real API directly from this page.</p>
+      <div class="console">
+        <div class="row">
+          <input type="text" id="urlInput" placeholder="https://vt.tiktok.com/ZSxNb6qj7/" value="https://vt.tiktok.com/ZSxNb6qj7/">
+          <button class="run-btn" id="runBtn" onclick="runRequest()">Send request</button>
+        </div>
+        <div class="status-line" id="statusLine"></div>
+        <div class="preview-card" id="previewCard">
+          <img id="previewAvatar" src="" alt="">
+          <div class="meta">
+            <div class="name" id="previewName"></div>
+            <div class="title" id="previewTitle"></div>
+            <a class="dl" id="previewDl" href="#" target="_blank" rel="noopener">Open download_url →</a>
+          </div>
+        </div>
+        <pre class="result" id="resultBox"></pre>
+      </div>
+    </section>
+
+    <section id="errors">
+      <h2>Errors &amp; Notes</h2>
+      <table>
+        <thead><tr><th>Case</th><th>Behavior</th></tr></thead>
+        <tbody>
+          <tr><td>Missing <code>down</code> param</td><td>Returns an error JSON object; no <code>down</code> means nothing to resolve.</td></tr>
+          <tr><td>Invalid / expired TikTok link</td><td>Returns an error JSON object describing the resolution failure.</td></tr>
+          <tr><td>Photo carousel posts</td><td><code>content_type</code> is <code>"photo"</code>; expect an array of image URLs in place of <code>download_url</code>.</td></tr>
+          <tr><td>Signed URL expiry</td><td>CDN links embed an <code>x-expires</code> timestamp — don't store them for later use, re-request instead.</td></tr>
+        </tbody>
+      </table>
+      <div class="field-note">Built by <b>Pasindu</b>. No API key or rate-limit headers are currently documented by the service — treat it as best-effort.</div>
+    </section>
+  </main>
+</div>
+
+<footer>tdownv4.sl-bjs.workers.dev &nbsp;·&nbsp; docs generated for internal / personal use</footer>
+
+<script>
+function copyText(id, btn){
+  const text = document.getElementById(id).textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const old = btn.textContent;
+    btn.textContent = 'copied';
+    setTimeout(() => btn.textContent = old, 1200);
+  });
+}
+
+async function runRequest(){
+  const input = document.getElementById('urlInput');
+  const btn = document.getElementById('runBtn');
+  const statusLine = document.getElementById('statusLine');
+  const resultBox = document.getElementById('resultBox');
+  const previewCard = document.getElementById('previewCard');
+
+  const url = input.value.trim();
+  if(!url){
+    statusLine.textContent = 'Enter a TikTok URL first.';
+    statusLine.className = 'status-line show err';
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'Sending…';
+  statusLine.className = 'status-line show';
+  statusLine.style.color = 'var(--muted)';
+  statusLine.textContent = 'Requesting tdownv4.sl-bjs.workers.dev …';
+  resultBox.className = 'result';
+  previewCard.className = 'preview-card';
+
+  const endpoint = 'https://tdownv4.sl-bjs.workers.dev/?down=' + encodeURIComponent(url);
+
+  try{
+    const res = await fetch(endpoint);
+    const data = await res.json();
+
+    resultBox.textContent = JSON.stringify(data, null, 2);
+    resultBox.className = 'result show';
+
+    if(res.ok && data && data.author){
+      statusLine.textContent = '200 OK — ' + (data.content_type || 'content') + ' resolved';
+      statusLine.className = 'status-line show ok';
+
+      document.getElementById('previewAvatar').src = data.author.avatar || '';
+      document.getElementById('previewName').textContent = data.author.nickname || data.author.username || 'Unknown';
+      document.getElementById('previewTitle').textContent = data.title || '';
+      const dlLink = document.getElementById('previewDl');
+      if(data.download_url){
+        dlLink.href = data.download_url;
+        dlLink.style.display = 'inline-block';
+        dlLink.textContent = 'Open download_url →';
+      } else {
+        dlLink.style.display = 'none';
+      }
+      previewCard.className = 'preview-card show';
+    } else {
+      statusLine.textContent = (res.status || 'ERR') + ' — request did not resolve as expected';
+      statusLine.className = 'status-line show err';
+    }
+  } catch(err){
+    statusLine.textContent = 'Request failed: ' + err.message + ' (network/CORS may be blocking this from your browser)';
+    statusLine.className = 'status-line show err';
+    resultBox.textContent = String(err);
+    resultBox.className = 'result show';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Send request';
+  }
+}
+</script>
+
+</body>
+</html>
